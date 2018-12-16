@@ -14,7 +14,9 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 
 ------------
 ### 16_Dec_2018
+
 add the viterbi algorithm in HMM_CRF directory
+
 ------------
 
 ### 15_Nov_2018
