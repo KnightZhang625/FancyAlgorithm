@@ -10,7 +10,7 @@ import pandas as pd
 
 class SpaceX(object):
     '''
-        Double Salute to the Elon Musk, to whom make the world better !
+        Double Salute to the Elon Musk, to whom makes the world better !
     '''
     class _Node(object):
         '''
@@ -88,7 +88,7 @@ class SpaceX(object):
 
                 START   B   B   B   END
 
-                *s*    x   y   y  
+                *s*     x   y   y  
         '''
 
     @staticmethod
