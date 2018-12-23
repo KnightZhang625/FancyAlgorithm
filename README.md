@@ -15,7 +15,7 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 ------------
 ### 23_Dec_2018
 
-add the crf_suite turorail in the HMM_CRF directory
+add the crf_suite tutorial in the HMM_CRF directory
 
 ------------
 ### 17_Dec_2018
