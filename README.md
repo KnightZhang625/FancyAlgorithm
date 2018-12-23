@@ -13,6 +13,11 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 > example: *version_0.1_02_Nov	*
 
 ------------
+### 23_Dec_2018
+
+add the crf_suite turorail in the HMM_CRF directory
+
+------------
 ### 17_Dec_2018
 
 revise the viterbi algorithm, named 'Viterbi_2nd.py', which provides more clear comments
