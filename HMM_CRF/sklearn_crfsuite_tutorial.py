@@ -73,6 +73,10 @@ def sent2labels(sent):
 def sent2tokens(sent):
     return [token for token, postag, label in sent]                 # list contains words
 
+def print_transitions(trans_features):
+    for (label_from, label_to), weight in trans_features:
+        print("%-6s -> %-7s %0.6f" % (label_from, label_to, weight))
+
 if __name__ == '__main__':
     # 1.download the corpus first, if downloaded, comment it
     '''
@@ -112,11 +116,18 @@ if __name__ == '__main__':
     # 6. evaluate the model
     labels = list(crf.classes_)
     labels.remove('O')
+
     '''
+    show some example testing data
+    X_test = [[('entre', 'SP', '',), ('máquinas', 'NC', '')], [('minerales', 'AQ', '')]]
     y_pred = crf.predict(X_test)
+    print(y_pred)
+    sys.exit()
+    '''
     results = metrics.flat_f1_score(y_test, y_pred, average='weighted', labels=labels)
     print(results)
 
+    '''
     from sklearn.preprocessing import MultiLabelBinarizer
     multi_label_binarizer = MultiLabelBinarizer().fit(y_test)
     y_test_bi =  multi_label_binarizer.transform(y_test)
@@ -126,6 +137,7 @@ if __name__ == '__main__':
     '''
 
     # 7. GridSearchCV
+    '''
     crf = sklearn_crfsuite.CRF(
     algorithm='lbfgs',
     max_iterations=100,
@@ -143,5 +155,13 @@ if __name__ == '__main__':
 
     print('best params:', rs.best_params_)
     print('best CV score:', rs.best_score_)
+    '''
 
     # 8. display the graph
+    from collections import Counter
+
+    print("Top likely transitions:")
+    print_transitions(Counter(crf.transition_features_).most_common(20))
+
+    print("\nTop unlikely transitions:")
+    print_transitions(Counter(crf.transition_features_).most_common()[-20:])
