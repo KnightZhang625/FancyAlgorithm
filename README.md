@@ -13,6 +13,11 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 > example: *version_0.1_02_Nov	*
 
 ------------
+### 07_Jan_2019
+
+add the lstm_crf, fully understand  
+
+------------
 ### 23_Dec_2018
 
 add the crf_suite tutorial in the HMM_CRF directory
