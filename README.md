@@ -13,9 +13,13 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 > example: *version_0.1_02_Nov	*
 
 ------------
-### 07_Jan_2019
+### 14_Jan_2019
 
-add the lstm_crf, fully understand  
+finish the lstm_crf tutorial, in the Apollo directory, the encoder_decoder_api could be used for training  
+data_format :  
+input tensor : a sequence  
+output tensor : a sequence  
+do not have sequence to tensor function, must be implemented manually  
 
 ------------
 ### 23_Dec_2018
