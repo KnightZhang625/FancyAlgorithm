@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Author: Jiaxin Zhang
-<<<<<<< HEAD
 # @Date:   14/Jan/2019
-=======
-# @Date:   11/Jan/2019
->>>>>>> 5b03de0baa522d88a83e12b7eb0c4fdf90390dd6
 # @Last Modified by:    
 # @Last Modified time:
 
@@ -14,13 +10,12 @@
     however, further mini-batch training is still studied by the author
 '''
 
+import random
+
 import torch
 import torch.nn as nn
-import torch.optim as optim
-<<<<<<< HEAD
 import torch.nn.functional as F
-
-import random
+import torch.optim as optim
 
 device = torch.divice('cude' if torch.cuda.is_available() else 'cpu')       # determine each tensor variable's device parameter
 SOS_TOKEN = 0                                                               # each sentence starts from 'SOS'
@@ -192,9 +187,3 @@ def trainIters(encoder, decoder, n_iters, print_every, learning_rate=0.01):
         # if iter % print_every == 0:
         #     print(loss_total)
 ##########################################################################################################
-=======
-import torch.functional as F
-
-############################################# Encoder Module ############################################
-#########################################################################################################
->>>>>>> 5b03de0baa522d88a83e12b7eb0c4fdf90390dd6
