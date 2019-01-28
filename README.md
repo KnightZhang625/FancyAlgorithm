@@ -13,6 +13,15 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 > example: *version_0.1_02_Nov	*
 
 ------------
+### 28_Jan_2019
+
+**GOOD NEWS !**  
+finally, figure out how to train sequence model in batch mode  
+this will be an extremely boost in the training speed  
+> see the lstm_tagging_batch in the '/Apollo/model' directory  
+_love you, my super duper beautiful girl_  
+
+------------
 ### 22_Jan_2019
 
 finish the lstm_crf tutorial  
