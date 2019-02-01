@@ -84,7 +84,7 @@ class Bi_LSTM(nn.Module):
         y_pred_tensor = y_pred[0,]              # the item in y_pred is always tensor
 
         # concatenate the initial y_true and y_pred with respective left data
-        for i in range(1, BATCH_SIZE):
+        for i in range(1, BATCH_SIZE):s
             y_true_temp = torch.tensor(y_true[i], dtype=torch.long)
             y_true_tensor = torch.cat((y_true_tensor, y_true_temp), dim=0)
      
