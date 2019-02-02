@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Jiaxin Zhang
 # @Date:   30/Jan/2019
-# @Last Modified by:    
-# @Last Modified time:
+# @Last Modified by:    Jiaxin Zhang
+# @Last Modified time:  02/Feb/2019
 
 import os
 import sys
@@ -13,6 +13,7 @@ os.sys.path.insert(0, cur_dir)
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
+import torch.optim as optim
 
 from Utils.utils import padding_function, prepare_sequence
 
@@ -94,22 +95,27 @@ class Decoder(nn.Module):
         output = F.log_softmax(output, dim=2)
         return output, hidden
         
-        
-        
+def calcuate_loss(y_true, y_pred, loss_func, batch_size):
+    '''
+        y_true : list type, each list consists of actual length
+        y_pred : list type, each item is composed of (batch_size, 1, target_size)
+    '''
+    mask = [data.size()[-1] for data in y_true]
 
-# class Train(object):
-#     def __init__(self, model, train_x, train_y, batch_size, word_ix, tag_ix, device):
-#        '''
-#             train_x : just raw X data
-#             train_y : just raw y data
-#        '''
-#         self.model = model
-#         self.train_x = train_x
-#         self.train_y = train_y
-#         self.batch_size = batch_size
-#         self.word_ix = word_ix
-#         self.tag_ix = tag_ix
-#         self.device = device
+    y_true_for_loss = y_true[0]
+    for i in range(1, len(y_true)):
+        y_true_for_loss = torch.cat((y_true_for_loss, y_true[i]))
+    
+    y_pred_for_loss = y_pred[0][0,]
+    for i in range(batch_size):
+        if i == 0:
+            for j in range(1, mask[i]):
+                y_pred_for_loss = torch.cat((y_pred_for_loss, y_pred[j][i]))
+        else:
+            for j in range(0, mask[i]):
+                y_pred_for_loss = torch.cat((y_pred_for_loss, y_pred[j][i]))
+    loss = loss_func(y_pred_for_loss, y_true_for_loss)
+    return loss
 
 if __name__ == '__main__':
     training_data = [('my name is John'.split(), '我 的 名字 是 约翰'.split()), 
@@ -126,7 +132,7 @@ if __name__ == '__main__':
     eng_vocab = list(set(eng_vocab))
     eng_vocab.insert(PADDING_IDX, '*')
     chs_vocab = list(set(chs_vocab))
-    chs_vocab.insert(0, 'EOS')
+    # chs_vocab.insert(0, 'EOS')
     chs_vocab.insert(0, 'SOS')
     eng_idx = {word : index for index, word in enumerate(eng_vocab)}
     idx_eng = {value : key for key, value in eng_idx.items()}
@@ -148,24 +154,89 @@ if __name__ == '__main__':
                     encoder_params['hidden_dim'], encoder_params['batch_size'], PADDING_IDX)
     decoder_model = Decoder(decoder_params['vocab_size'], decoder_params['hidden_dim'], )
     batch_size = encoder_params['batch_size']
-    
-    for i in range(0, len(train_x), encoder_params['batch_size']):
-        batch_x = train_x[i: i+batch_size]
-        batch_y = train_y[i: i+batch_size]
-        x_padding, X_lengths = padding_function(batch_x, eng_idx, device)
-        target = prepare_sequence(batch_y, chs_idx, device)
-        target = sorted(target, key=lambda t : t.size()[-1], reverse=True)
-        encoder_outputs = encoder_model(x_padding, X_lengths)
-        
-        decoder_input = torch.zeros(batch_size, 1, dtype=torch.long, device=device)
-        prev_hidden = encoder_outputs[-1, ].unsqueeze(0)
-   
-        for i in range(decoder_input.size()[0]):
-            decoder_input[i, :] = torch.tensor(chs_idx['EOS'], dtype=torch.long, device=device)
-        decoder_model(decoder_input, prev_hidden, encoder_outputs)
-        
-        max_length = 10
-        outputs = torch.zeors
-        for i in range(10):
-            decoder_output, prev_hidden = decoder_model(decoder_input, prev_hidden, encoder_outputs)
+
+    from train import Train
+    t = Train(encoder_model, decoder_model, train_x, train_y, eng_idx, chs_idx, 3000, encoder_params['batch_size'], device)
+    t.launch(10)
+    t.predict(train_x[0: 2], idx_eng, idx_chs)
+    sys.exit()
+
+    encoder_optimizer = optim.Adam(encoder_model.parameters(), lr=0.01)
+    decoder_optimizer = optim.Adam(decoder_model.parameters(), lr=0.01)
+    loss_function = nn.NLLLoss()
+
+    for epoch in range(3000):
+        for i in range(0, len(train_x), encoder_params['batch_size']):
+            batch_x = train_x[i: i+batch_size]
+            batch_y = train_y[i: i+batch_size]
+            x_padding, X_lengths = padding_function(batch_x, eng_idx, device)
+            target = prepare_sequence(batch_y, chs_idx, device)
+            target = sorted(target, key=lambda t : t.size()[-1], reverse=True)
+            encoder_outputs = encoder_model(x_padding, X_lengths)
             
+            decoder_input = torch.zeros(batch_size, 1, dtype=torch.long, device=device)
+            prev_hidden = encoder_outputs[-1, ].unsqueeze(0)
+    
+            for i in range(decoder_input.size()[0]):
+                decoder_input[i, :] = torch.tensor(chs_idx['SOS'], dtype=torch.long, device=device)
+            
+            max_length = 10
+            decoder_outputs = []
+            # EOS_TOKEN = chs_idx['EOS']
+            for i in range(max_length):
+                '''
+                    decoder_output : (2, 1, 11)
+                    prev_hidden : (1, 2, 4)
+                '''
+                decoder_output, prev_hidden = decoder_model(decoder_input, prev_hidden, encoder_outputs)
+                decoder_outputs.append(decoder_output)
+                _, topI = decoder_output.topk(1)
+                topI = topI.squeeze().view(batch_size, -1)
+                decoder_input = topI.clone().detach()
+                # print(decoder_input.size())
+                # sys.exit()
+                # for index, i in enumerate(topI):
+                # 	print(index, i)
+                    # decoder_input[index, ] = i.clone()
+                    # decoder_input[index, ] = i
+                #     if i.item() == EOS_TOKEN:
+                #         n +=1
+                # if n == batch_size:
+                #     break
+            loss = calcuate_loss(target, decoder_outputs, loss_function, batch_size)
+            encoder_model.zero_grad()
+            decoder_model.zero_grad()
+            loss.backward()
+            encoder_optimizer.step()
+            decoder_optimizer.step()
+            print(loss.item())
+
+    # test
+    batch_x = train_x[0: 2]
+    x_padding, X_lengths = padding_function(batch_x, eng_idx, device)
+    encoder_outputs = encoder_model(x_padding, X_lengths)
+    decoder_input = torch.zeros(batch_size, 1, dtype=torch.long, device=device)
+    prev_hidden = encoder_outputs[-1, ].unsqueeze(0)
+    for i in range(decoder_input.size()[0]):
+        decoder_input[i, :] = torch.tensor(chs_idx['SOS'], dtype=torch.long, device=device)
+    max_length = 10
+    decoder_outputs = []
+    results = []
+    for i in range(max_length):
+        '''
+            decoder_output : (2, 1, 11)
+            prev_hidden : (1, 2, 4)
+        '''
+        decoder_output, prev_hidden = decoder_model(decoder_input, prev_hidden, encoder_outputs)
+        decoder_outputs.append(decoder_output)
+        _, topI = decoder_output.topk(1)
+        results.append(topI)
+        topI = topI.squeeze().view(batch_size, -1)
+        decoder_input = topI.clone().detach()
+    
+    re_1 = [idx_chs[i[0].item()] for i in results]
+    re_2 = [idx_chs[i[1].item()] for i in results]
+    print('src :', [idx_eng[i.item()] for i in x_padding[0,]])
+    print('tar :', re_1)
+    print('src :', [idx_eng[i.item()] for i in x_padding[1,]])
+    print('tar :', re_2)
