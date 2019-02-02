@@ -15,7 +15,7 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 ------------
 ### 02_Feb_2019
 
-**Happy New Year !**  
+**Happy New Year coming soon!**  
 create NMT frameword by using seq2seq with attention under batch training method  
 the attention mechanism is from  
 > the Effective approaches to attention-based neural machine translation  
