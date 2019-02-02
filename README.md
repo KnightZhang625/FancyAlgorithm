@@ -18,7 +18,7 @@ version_num_data_month, we are now at version 0.1, if want to update version, pl
 **Happy New Year !**  
 create NMT frameword by using seq2seq with attention under batch training method  
 the attention mechanism is from  
-> the Effective approaches to attention-based neural machine translation
+> the Effective approaches to attention-based neural machine translation  
 > see the seq2seq_with_attention.py in the '/Apollo/model' directory  
 
 ------------
