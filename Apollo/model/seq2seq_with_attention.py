@@ -156,7 +156,7 @@ if __name__ == '__main__':
     batch_size = encoder_params['batch_size']
 
     from train import Train
-    t = Train(encoder_model, decoder_model, train_x, train_y, eng_idx, chs_idx, 3000, encoder_params['batch_size'], device)
+    t = Train(encoder_model, decoder_model, train_x, train_y, eng_idx, chs_idx, 1000, encoder_params['batch_size'], device)
     t.launch(10)
     t.predict(train_x[0: 2], idx_eng, idx_chs)
     sys.exit()

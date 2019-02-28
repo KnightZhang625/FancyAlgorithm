@@ -12,6 +12,12 @@ This package will be the foundation on which our platform would be based on, it 
 version_num_data_month, we are now at version 0.1, if want to update version, please talk with the group.
 > example: *version_0.1_02_Nov	*
 
+------------  
+### 28_Feb_2019  
+**Seperate the tutorial module from the Apollo**  
+In order to make everything in order, creating a individual tutorial directory  
+> For more info, see the README belonging to this directory directly  
+
 ------------
 ### 02_Feb_2019
 
