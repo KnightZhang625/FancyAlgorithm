@@ -55,7 +55,7 @@ class Model(object):
         embedding = tf.get_variable('embedding', shape=(VOCAB_SIZE, HIDDEN_SIZE))
 
         # map the input to the embedding
-        inputs = tf.nn.embedding_loopup(embedding, self.input_data)
+        inputs = tf.nn.embedding_lookup(embedding, self.input_data)
 
         if is_training:
             inputs = tf.nn.dropout(inputs, EMBEDDING_KEEP_PROB)
@@ -115,7 +115,7 @@ def run_epoch(session, model, batches, train_op, output_log, step):
     return step, np.exp(total_cost / iters)
 
 def main():
-    initializer = tf.random_uniform_initialzer(-0.05, 0.05)
+    initializer = tf.initializers.random_uniform(-0.05, 0.05)
 
     with tf.variable_scope('language_model', reuse=None, initializer=initializer):
         train_model = Model(True, TRAIN_BATCH_SIZE, TRAIN_NUM_STEP)
@@ -124,7 +124,7 @@ def main():
         eval_model = Model(False, EVAL_BATCH_SIZE, EVAL_NUM_STEP)
     
     with tf.Session() as session:
-        tf.global_variable_initializer().run()
+        tf.global_variables_initializer().run()
 
         train_batches = make_batches(read_data(TRAIN_DATA), TRAIN_BATCH_SIZE, TRAIN_NUM_STEP)
         eval_batches = make_batches(read_data(EVAL_DATA), EVAL_BATCH_SIZE, EVAL_NUM_STEP)
@@ -145,4 +145,5 @@ def main():
         print('Test Perplexity %.3f'%(test_pplx))
 
 if __name__ == '__main__':
-    model = Model(True, TRAIN_BATCH_SIZE, TRAIN_NUM_STEP)
+    # model = Model(True, TRAIN_BATCH_SIZE, TRAIN_NUM_STEP)
+    main()
